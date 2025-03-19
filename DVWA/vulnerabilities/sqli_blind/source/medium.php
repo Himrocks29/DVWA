@@ -10,7 +10,9 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 			$id = ((isset($GLOBALS["___mysqli_ston"]) && is_object($GLOBALS["___mysqli_ston"])) ? mysqli_real_escape_string($GLOBALS["___mysqli_ston"],  $id ) : ((trigger_error("[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.", E_USER_ERROR)) ? "" : ""));
 
 			// Check database
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+			$stmt->bind_param("ssi", $data->first_name, $data->surname, $data->id);
+			$query = "UPDATE users SET first_name = ?, last_name = ? WHERE user_id = ?";
+			#$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
 			try {
 				$result = mysqli_query($GLOBALS["___mysqli_ston"],  $query ); // Removed 'or die' to suppress mysql errors
 			} catch (Exception $e) {
@@ -30,8 +32,9 @@ if( isset( $_POST[ 'Submit' ]  ) ) {
 			break;
 		case SQLITE:
 			global $sqlite_db_connection;
-			
-			$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
+			$stmt->bind_param("ssi", $data->first_name, $data->surname, $data->id);
+			$query = "UPDATE users SET first_name = ?, last_name = ? WHERE user_id = ?";
+			#$query  = "SELECT first_name, last_name FROM users WHERE user_id = $id;";
 			try {
 				$results = $sqlite_db_connection->query($query);
 				$row = $results->fetchArray();
