@@ -7,7 +7,12 @@ dvwaPageStartup( array( 'authenticated' ) );
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ] = 'Help' . $page[ 'title_separator' ].$page[ 'title' ];
-
+$allowed_pages = [
+    "sqli", 
+    "xss", 
+    "csrf", 
+    "upload"
+];
 if (array_key_exists ("id", $_GET) &&
 	array_key_exists ("security", $_GET) &&
 	array_key_exists ("locale", $_GET)) {
@@ -16,9 +21,12 @@ if (array_key_exists ("id", $_GET) &&
 	$locale = $_GET[ 'locale' ];
 
 	ob_start();
-	if ($locale == 'en') {
+	if (isset($id) && in_array($id, $allowed_pages, true)) {
+		$file_path = DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.php";
+	/*if ($locale == 'en') {
 		eval( '?>' . file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.php" ) . '<?php ' );
-	} else {
+	}*/ 
+	else {
 		eval( '?>' . file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.{$locale}.php" ) . '<?php ' );
 	}
 	$help = ob_get_contents();
