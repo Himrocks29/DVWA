@@ -7,8 +7,10 @@ dvwaPageStartup( array( 'authenticated' ) );
 
 $page = dvwaPageNewGrab();
 $page[ 'title' ] .= 'Source' . $page[ 'title_separator' ].$page[ 'title' ];
-
-if (array_key_exists ("id", $_GET) && array_key_exists ("security", $_GET)) {
+$allowed_pages = ["sqli", "xss", "csrf"]
+$allowed_security = ["High", "Medium", "Low"]
+#if (array_key_exists ("id", $_GET) && array_key_exists ("security", $_GET)) {
+if (isset($id,$security) && in_array($id, $allowed_pages,true) && in_array($security, $allowed_security,true)) {
 	$id       = $_GET[ 'id' ];
 	$security = $_GET[ 'security' ];
 
@@ -61,8 +63,11 @@ if (array_key_exists ("id", $_GET) && array_key_exists ("security", $_GET)) {
 	$source = str_replace( array( '$html .=' ), array( 'echo' ), $source );
 
 	$js_html = "";
-	if (file_exists (DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js")) {
-		$js_source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js" );
+	$source_js = DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js";
+	#if (file_exists (DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js")) {
+	if (file_exists($source_js) && pathinfo($source_js, PATHINFO_EXTENSION) === "js"){
+		#$js_source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.js" );
+		$js_source = @file_get_contents($source_js)
 		$js_html = "
 		<h2>vulnerabilities/{$id}/source/{$security}.js</h2>
 		<div id=\"code\">

@@ -13,6 +13,7 @@ $allowed_pages = [
     "csrf", 
     "upload"
 ];
+$allowed_locales = ["en", "fr", "es", "de"];
 if (array_key_exists ("id", $_GET) &&
 	array_key_exists ("security", $_GET) &&
 	array_key_exists ("locale", $_GET)) {
@@ -26,8 +27,10 @@ if (array_key_exists ("id", $_GET) &&
 	/*if ($locale == 'en') {
 		eval( '?>' . file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.php" ) . '<?php ' );
 	}*/ 
-	else {
-		eval( '?>' . file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.{$locale}.php" ) . '<?php ' );
+	#else {
+	else if(isset($id, $locale) && in_array($id, $allowed_pages, true) && in_array($locale, $allowed_locales, true)){	
+		$file_path = DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.{$locale}.php";
+		#eval( '?>' . file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/help/help.{$locale}.php" ) . '<?php ' );
 	}
 	$help = ob_get_contents();
 	ob_end_clean();
