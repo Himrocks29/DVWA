@@ -8,8 +8,17 @@ dvwaPageStartup( array( 'authenticated' ) );
 $page = dvwaPageNewGrab();
 $page[ 'title' ] = 'Source' . $page[ 'title_separator' ].$page[ 'title' ];
 
-if (array_key_exists ("id", $_GET)) {
-	$id = $_GET[ 'id' ];
+$allowed_vulnerabilities = [
+    "javascript", "fi", "brute", "csrf", "exec",
+    "sqli", "sqli_blind", "upload", "xss_r",
+    "xss_s", "weak_id", "authbypass", "open_redirect"
+];
+
+
+#if (array_key_exists ("id", $_GET)) {
+$id = $_GET[ 'id' ];
+
+if (isset($_GET["id"]) && in_array($_GET["id"], $allowed_vulnerabilities, true)){
 
 	$lowsrc = @file_get_contents("./{$id}/source/low.php");
 	$lowsrc = str_replace( array( '$html .=' ), array( 'echo' ), $lowsrc);

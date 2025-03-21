@@ -10,11 +10,9 @@ $page[ 'title' ] .= 'Source' . $page[ 'title_separator' ].$page[ 'title' ];
 $allowed_pages = ["sqli", "xss", "csrf"]
 $allowed_security = ["High", "Medium", "Low"]
 #if (array_key_exists ("id", $_GET) && array_key_exists ("security", $_GET)) {
+$id       = $_GET[ 'id' ];
+$security = $_GET[ 'security' ];
 if (isset($id,$security) && in_array($id, $allowed_pages,true) && in_array($security, $allowed_security,true)) {
-	$id       = $_GET[ 'id' ];
-	$security = $_GET[ 'security' ];
-
-
 	switch ($id) {
 		case "fi" :
 			$vuln = 'File Inclusion';
@@ -59,7 +57,9 @@ if (isset($id,$security) && in_array($id, $allowed_pages,true) && in_array($secu
 			$vuln = "Unknown Vulnerability";
 	}
 
-	$source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.php" );
+	#$source = @file_get_contents( DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.php" );
+	$source = DVWA_WEB_PAGE_TO_ROOT . "vulnerabilities/{$id}/source/{$security}.php";
+
 	$source = str_replace( array( '$html .=' ), array( 'echo' ), $source );
 
 	$js_html = "";
