@@ -213,7 +213,7 @@ function dvwaSecurityLevelSet( $pSecurityLevel ) {
 		$httponly = true;
 	}
 	else {
-		$httponly = false;
+		$httponly = true;
 	}
 
 	setcookie( 'security', $pSecurityLevel, 0, "/", "", false, $httponly );
