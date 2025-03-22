@@ -10,11 +10,8 @@ $page[ 'title' ] = 'Blind SQL Injection Cookie Input' . $page[ 'title_separator'
 
 if( isset( $_POST[ 'id' ] ) ) {
 	#setcookie( 'id', $_POST[ 'id' ]);
-	setcookie("id", $_POST['id'], [
-		'expires' => time() + 3600, // 1-hour expiry
-		'httponly' => true,  // Prevents JavaScript access (XSS protection)
-		'secure' => true,    // Only send over HTTPS
-		'samesite' => 'Strict' // Prevents CSRF
+	setcookie("id", $_POST['id'], ['expires' => time() + 3600, 'httponly' => true,  'secure' => true,   
+		'samesite' => 'Strict' 
 	]);
 	$page[ 'body' ] .= "Cookie ID set!<br /><br /><br />";
 	$page[ 'body' ] .= "<script>window.opener.location.reload(true);</script>";
