@@ -588,12 +588,40 @@ function dvwaDatabaseConnect() {
 
 // -- END (Database Management)
 
-
-function dvwaRedirect( $pLocation ) {
+/*Vulnerable OpenRedirect Code*/
+/*function dvwaRedirect( $pLocation ) {
 	session_commit();
 	header( "Location: {$pLocation}" );
 	exit;
+}*/
+
+/*Vulnerability Fix*/
+function dvwaRedirect($pLocation) {
+    session_commit(); 
+
+    // Remove any header injection attempts
+    $pLocation = str_replace(["\r", "\n"], '', $pLocation);
+
+    // Allow only relative URLs or trusted domains
+    if (!filter_var($pLocation, FILTER_VALIDATE_URL)) {
+        // Ensure it's a relative path within the application
+        if (strpos($pLocation, '/') !== 0) {
+            $pLocation = '/' . ltrim($pLocation, '/');
+        }
+    } else {
+        // Validate against a whitelist (example: allow only dvwa.local)
+        $parsedUrl = parse_url($pLocation);
+        $allowedDomains = ['dvwa.local']; // Modify based on your trusted domains
+
+        if (!isset($parsedUrl['host']) || !in_array($parsedUrl['host'], $allowedDomains, true)) {
+            die("Invalid redirect URL!");
+        }
+    }
+
+    header("Location: {$pLocation}", true, 302);
+    exit;
 }
+
 
 // XSS Stored guestbook function --
 function dvwaGuestbook() {
