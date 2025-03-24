@@ -1,5 +1,5 @@
 <?php
-function encrypt ($plaintext, $key) {
+/*function encrypt ($plaintext, $key) {
 	$e = openssl_encrypt($plaintext, 'aes-128-ecb', $key, OPENSSL_PKCS1_PADDING);
 	if ($e === false) {
 		throw new Exception ("Encryption failed");
@@ -12,7 +12,54 @@ function decrypt ($ciphertext, $key) {
 		throw new Exception ("Decryption failed");
 	}
 	return $e;
+}*/
+
+function encrypt($plaintext, $key) {
+    // Ensure key length is correct
+    if (strlen($key) !== 16) {
+        throw new Exception("Invalid key length: 16 bytes required for AES-128");
+    }
+
+    $ivlen = openssl_cipher_iv_length('aes-128-gcm');
+    $iv = random_bytes($ivlen); // Securely generate IV
+    $tag = '';
+
+    // Encrypt using AES-GCM (Authenticated Encryption)
+    $ciphertext = openssl_encrypt($plaintext, 'aes-128-gcm', $key, 0, $iv, $tag);
+
+    if ($ciphertext === false) {
+        throw new Exception("Encryption failed");
+    }
+
+    // Store IV, Tag, and Ciphertext together (base64 encoded)
+    return base64_encode($iv . $tag . $ciphertext);
 }
+
+function decrypt($ciphertext_b64, $key) {
+    // Ensure key length is correct
+    if (strlen($key) !== 16) {
+        throw new Exception("Invalid key length: 16 bytes required for AES-128");
+    }
+
+    // Decode base64
+    $ciphertext_raw = base64_decode($ciphertext_b64);
+    $ivlen = openssl_cipher_iv_length('aes-128-gcm');
+
+    // Extract IV, Tag, and Ciphertext
+    $iv = substr($ciphertext_raw, 0, $ivlen);
+    $tag = substr($ciphertext_raw, $ivlen, 16);
+    $ciphertext = substr($ciphertext_raw, $ivlen + 16);
+
+    // Decrypt using AES-GCM
+    $plaintext = openssl_decrypt($ciphertext, 'aes-128-gcm', $key, 0, $iv, $tag);
+
+    if ($plaintext === false) {
+        throw new Exception("Decryption failed");
+    }
+
+    return $plaintext;
+}
+
 
 $key = "ik ben een aardbei";
 
