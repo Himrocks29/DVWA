@@ -588,12 +588,6 @@ function dvwaDatabaseConnect() {
 
 // -- END (Database Management)
 
-/*Vulnerable OpenRedirect Code*/
-/*function dvwaRedirect( $pLocation ) {
-	session_commit();
-	header( "Location: {$pLocation}" );
-	exit;
-}*/
 
 /*Vulnerability Fix*/
 function dvwaRedirect($pLocation) {
