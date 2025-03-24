@@ -1,6 +1,13 @@
 <?php
 
+// Define allowed redirect paths (whitelist)
+$allowedPaths = [
+    "/home.php",
+    "/dashboard.php",
+    "/profile.php"
+];
 if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != "") {
+	
 	if (preg_match ("/http:\/\/|https:\/\//i", $_GET['redirect'])) {
 		http_response_code (500);
 		?>
@@ -8,8 +15,9 @@ if (array_key_exists ("redirect", $_GET) && $_GET['redirect'] != "") {
 		<?php
 		exit;
 	} else {
-		header ("location: " . $_GET['redirect']);
-		exit;
+		if (in_array($redirectUrl, $allowedPaths, true)) {
+			header("Location: " . $redirectUrl, true, 302);
+			exit;
 	}
 }
 
